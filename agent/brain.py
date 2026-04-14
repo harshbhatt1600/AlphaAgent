@@ -8,6 +8,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 from rich import print as rprint
+from tools.news_sentiment import get_stock_news
 
 # Import tools
 from tools.fetch_stock_data import fetch_stock_data
@@ -26,6 +27,32 @@ logging.basicConfig(
 
 # --- Tool Definitions ---
 TOOLS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_stock_news",
+            "description": "Fetches latest news for a stock and performs sentiment analysis. Use when user asks about news, recent events, why a stock moved, market sentiment, or what's happening with a company.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "ticker": {
+                        "type": "string",
+                        "description": "Stock ticker symbol e.g. 'TCS.NS'"
+                    },
+                    "company_name": {
+                        "type": "string",
+                        "description": "Full company name e.g. 'Tata Consultancy Services'"
+                    },
+                    "num_articles": {
+                        "type": "integer",
+                        "description": "Number of articles to analyze (default 10)",
+                        "default": 10
+                    }
+                },
+                "required": ["ticker", "company_name"]
+            }
+    }
+    },
     {
         "type": "function",
         "function": {
@@ -92,6 +119,8 @@ def execute_tool(tool_name: str, tool_args: dict) -> str:
             result = calculate_indicators(**tool_args)
         elif tool_name == "detect_anomalies":
             result = detect_anomalies(**tool_args)
+        elif tool_name == "get_stock_news":
+            result = get_stock_news(**tool_args)
         else:
             result = {"error": f"Unknown tool: {tool_name}"}
     except Exception as e:
