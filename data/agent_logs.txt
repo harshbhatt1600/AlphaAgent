@@ -1,0 +1,27 @@
+2026-04-14 07:50:52,297 - Agent iteration 1 for query: how is TCS performing right now?
+2026-04-14 07:50:52,750 - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-14 07:50:52,775 - Tool called: fetch_stock_data | Args: {'ticker': 'TCS.NS'}
+2026-04-14 07:50:56,778 - Agent iteration 2 for query: how is TCS performing right now?
+2026-04-14 07:50:57,216 - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-04-14 07:50:57,217 - API error: Error code: 400 - {'error': {'message': "Failed to call a function. Please adjust your prompt. See 'failed_generation' for more details.", 'type': 'invalid_request_error', 'code': 'tool_use_failed', 'failed_generation': '**Current Performance:**\nTCS is currently trading at 2472.6 INR, with a market capitalization of 8946083430400.\n\n**Trend Analysis:**\nTo understand the trend of TCS, let\'s analyze its price movement over the past quarter. \n<function=calculate_indicators={"ticker": "TCS.NS"}</function>'}}
+2026-04-14 07:52:39,358 - Agent iteration 1 for query: how is TCS performing today?
+2026-04-14 07:52:39,512 - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-04-14 07:52:39,512 - API error: Error code: 400 - {'error': {'message': 'The model `llama3-groq-70b-8192-tool-use-preview` has been decommissioned and is no longer supported. Please refer to https://console.groq.com/docs/deprecations for a recommendation on which model to use instead.', 'type': 'invalid_request_error', 'code': 'model_decommissioned'}}
+2026-04-14 07:54:29,210 - Agent iteration 1 for query: exir
+2026-04-14 07:54:29,327 - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-04-14 07:54:29,327 - API error: Error code: 400 - {'error': {'message': 'The model `llama3-groq-70b-8192-tool-use-preview` has been decommissioned and is no longer supported. Please refer to https://console.groq.com/docs/deprecations for a recommendation on which model to use instead.', 'type': 'invalid_request_error', 'code': 'model_decommissioned'}}
+2026-04-14 07:54:48,127 - Agent iteration 1 for query: how is TCS performing today?
+2026-04-14 07:54:48,410 - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-14 07:54:48,422 - Agent completed in 1 iterations
+2026-04-14 07:55:52,712 - Agent iteration 1 for query: how is TCS performing today?
+2026-04-14 07:55:53,174 - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-14 07:55:53,187 - Tool called: fetch_stock_data | Args: {'period': '1d', 'ticker': 'TCS.NS'}
+2026-04-14 07:55:54,522 - Agent iteration 2 for query: how is TCS performing today?
+2026-04-14 07:55:55,337 - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-14 07:55:55,338 - Tool called: calculate_indicators | Args: {'period': '6mo', 'ticker': 'TCS.NS'}
+2026-04-14 07:55:55,563 - Agent iteration 3 for query: how is TCS performing today?
+2026-04-14 07:55:56,553 - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-14 07:55:56,555 - Agent completed in 3 iterations
+2026-04-14 07:57:07,251 - Agent iteration 1 for query: exir
+2026-04-14 07:57:07,602 - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-14 07:57:07,603 - Agent completed in 1 iterations

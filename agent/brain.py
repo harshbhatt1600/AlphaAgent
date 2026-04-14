@@ -1,17 +1,30 @@
 import os
 import json
+import logging
+from datetime import datetime
 from groq import Groq
 from dotenv import load_dotenv
+from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
+from rich import print as rprint
 
-# Import our tools
+# Import tools
 from tools.fetch_stock_data import fetch_stock_data
 from tools.technical_indicators import calculate_indicators
 from tools.anomaly_detection import detect_anomalies
 
 load_dotenv()
 
+# --- Setup ---
+console = Console()
+logging.basicConfig(
+    filename="data/agent_logs.txt",
+    level=logging.INFO,
+    format="%(asctime)s - %(message)s"
+)
+
 # --- Tool Definitions ---
-# This is how we tell the LLM what tools exist and how to use them
 TOOLS = [
     {
         "type": "function",
@@ -27,7 +40,7 @@ TOOLS = [
                     },
                     "period": {
                         "type": "string",
-                        "description": "Time period for historical data e.g. '1mo', '3mo', '6mo', '1y'",
+                        "description": "Time period e.g. '1mo', '3mo', '6mo', '1y'",
                         "default": "3mo"
                     }
                 },
@@ -39,19 +52,12 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "calculate_indicators",
-            "description": "Calculates technical indicators like RSI, MACD, Bollinger Bands and Moving Averages. Use this when user asks about technical analysis, trends, buy/sell signals, or momentum.",
+            "description": "Calculates technical indicators — RSI, MACD, Bollinger Bands, Moving Averages. Use for trend analysis, buy/sell signals, momentum questions.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "ticker": {
-                        "type": "string",
-                        "description": "Stock ticker symbol"
-                    },
-                    "period": {
-                        "type": "string",
-                        "description": "Time period for analysis",
-                        "default": "6mo"
-                    }
+                    "ticker": {"type": "string"},
+                    "period": {"type": "string", "default": "6mo"}
                 },
                 "required": ["ticker"]
             }
@@ -61,19 +67,12 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "detect_anomalies",
-            "description": "Detects unusual price or volume activity in a stock using Z-score analysis. Use this when user asks about unusual activity, volume spikes, price anomalies, or suspicious movements.",
+            "description": "Detects unusual price or volume activity using Z-score analysis. Use for unusual activity, volume spikes, suspicious movements.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "ticker": {
-                        "type": "string",
-                        "description": "Stock ticker symbol"
-                    },
-                    "period": {
-                        "type": "string",
-                        "description": "Time period to analyze",
-                        "default": "6mo"
-                    }
+                    "ticker": {"type": "string"},
+                    "period": {"type": "string", "default": "6mo"}
                 },
                 "required": ["ticker"]
             }
@@ -82,70 +81,80 @@ TOOLS = [
 ]
 
 # --- Tool Executor ---
-# This actually runs the tool the LLM asks for
 def execute_tool(tool_name: str, tool_args: dict) -> str:
-    print(f"\n🔧 Agent calling tool: {tool_name} with {tool_args}")
-    
-    if tool_name == "fetch_stock_data":
-        result = fetch_stock_data(**tool_args)
-    elif tool_name == "calculate_indicators":
-        result = calculate_indicators(**tool_args)
-    elif tool_name == "detect_anomalies":
-        result = detect_anomalies(**tool_args)
-    else:
-        result = {"error": f"Unknown tool: {tool_name}"}
-    
+    console.print(f"  [bold yellow]⚙ Calling tool:[/bold yellow] [cyan]{tool_name}[/cyan] with {tool_args}")
+    logging.info(f"Tool called: {tool_name} | Args: {tool_args}")
+
+    try:
+        if tool_name == "fetch_stock_data":
+            result = fetch_stock_data(**tool_args)
+        elif tool_name == "calculate_indicators":
+            result = calculate_indicators(**tool_args)
+        elif tool_name == "detect_anomalies":
+            result = detect_anomalies(**tool_args)
+        else:
+            result = {"error": f"Unknown tool: {tool_name}"}
+    except Exception as e:
+        result = {"error": str(e)}
+        logging.error(f"Tool error: {tool_name} | {str(e)}")
+
     return json.dumps(result, default=lambda x: str(x))
 
 
 # --- Agent Brain ---
-def run_agent(user_query: str) -> str:
+def run_agent(user_query: str, conversation_history: list) -> str:
     """
-    Main agent loop — ReAct pattern.
-    Reason about what tools to use, Act by calling them,
-    observe results, repeat until final answer.
+    ReAct agent loop with conversation memory and max iteration guard.
     """
     client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-    
-    # Conversation history
-    messages = [
-        {
-            "role": "system",
-            "content": """You are AlphaAgent — a professional stock market analyst AI. 
-You have access to real-time market data tools.
 
-When answering questions:
-1. Always fetch real data using your tools — never guess or make up numbers
-2. Use multiple tools when needed for a complete analysis
-3. Provide clear, professional insights based on the data
-4. Explain what the indicators mean in simple terms
-5. Always mention the data is real-time and date-specific
+    # System prompt
+    system_message = {
+        "role": "system",
+        "content": """You are AlphaAgent — a professional autonomous stock market analyst AI.
 
-Be concise but thorough. Think like a professional analyst."""
-        },
-        {
-            "role": "user",
-            "content": user_query
-        }
+You have access to real-time market data tools. Your job is to:
+1. Always fetch real data — never guess or hallucinate numbers
+2. Use multiple tools when needed for complete analysis
+3. Provide clear, professional insights with actionable conclusions
+4. Explain indicators in simple terms alongside technical details
+5. Always state if a stock shows bullish or bearish signals clearly
+
+Format your responses professionally with clear sections.
+Be concise but thorough. Think like a senior equity analyst."""
+    }
+
+    # Build messages with full conversation history
+    messages = [system_message] + conversation_history + [
+        {"role": "user", "content": user_query}
     ]
-    
-    print(f"\n🤖 AlphaAgent thinking about: '{user_query}'")
-    
-    # ReAct loop — agent keeps going until it has a final answer
-    while True:
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=messages,
-            tools=TOOLS,
-            tool_choice="auto",
-            max_tokens=1000
-        )
-        
+
+    MAX_ITERATIONS = 5  # Prevent infinite loops
+    iteration = 0
+
+    console.print(f"\n  [bold green]🧠 Reasoning...[/bold green]")
+
+    while iteration < MAX_ITERATIONS:
+        iteration += 1
+        logging.info(f"Agent iteration {iteration} for query: {user_query}")
+
+        try:
+            response = client.chat.completions.create(
+    model="meta-llama/llama-4-scout-17b-16e-instruct",
+    messages=messages,
+    tools=TOOLS,
+    tool_choice="auto",
+    max_tokens=2000,
+    parallel_tool_calls=False
+)
+        except Exception as e:
+            logging.error(f"API error: {str(e)}")
+            return f"I encountered an error connecting to the AI service: {str(e)}"
+
         message = response.choices[0].message
-        
-        # If agent wants to call tools
+
+        # Agent wants to call tools
         if message.tool_calls:
-            # Add agent's decision to history
             messages.append({
                 "role": "assistant",
                 "content": message.content,
@@ -161,32 +170,81 @@ Be concise but thorough. Think like a professional analyst."""
                     for tc in message.tool_calls
                 ]
             })
-            
-            # Execute each tool and add results to history
+
+            # Execute each tool
             for tool_call in message.tool_calls:
                 tool_name = tool_call.function.name
                 tool_args = json.loads(tool_call.function.arguments)
                 tool_result = execute_tool(tool_name, tool_args)
-                
+
                 messages.append({
                     "role": "tool",
                     "tool_call_id": tool_call.id,
                     "content": tool_result
                 })
-        
-        # If agent has final answer
+
+        # Agent has final answer
         else:
+            logging.info(f"Agent completed in {iteration} iterations")
             return message.content
 
+    return "I reached the maximum number of analysis steps. Please try a more specific question."
 
-# --- Test it ----
+
+# --- Interactive CLI ---
+def main():
+    console.print(Panel.fit(
+        "[bold cyan]🤖 ALPHAAGENT[/bold cyan]\n"
+        "[white]Autonomous Stock Market Intelligence Agent[/white]\n"
+        "[dim]Powered by Groq LLM + Real-time Market Data[/dim]",
+        border_style="cyan"
+    ))
+
+    console.print("\n[dim]Commands: 'exit' to quit | 'clear' to reset conversation[/dim]\n")
+
+    conversation_history = []
+
+    while True:
+        try:
+            user_input = console.input("[bold green]You:[/bold green] ").strip()
+
+            if not user_input:
+                continue
+
+            if user_input.lower() == "exit":
+                console.print("\n[dim]Goodbye! AlphaAgent shutting down.[/dim]")
+                break
+
+            if user_input.lower() == "clear":
+                conversation_history = []
+                console.print("[dim]Conversation cleared.[/dim]\n")
+                continue
+
+            # Run agent
+            response = run_agent(user_input, conversation_history)
+
+            # Display response
+            console.print(Panel(
+                response,
+                title="[bold cyan]AlphaAgent[/bold cyan]",
+                border_style="cyan",
+                padding=(1, 2)
+            ))
+
+            # Update conversation history
+            conversation_history.append({"role": "user", "content": user_input})
+            conversation_history.append({"role": "assistant", "content": response})
+
+            # Keep history manageable
+            if len(conversation_history) > 20:
+                conversation_history = conversation_history[-20:]
+
+        except KeyboardInterrupt:
+            console.print("\n[dim]Interrupted. Type 'exit' to quit.[/dim]")
+        except Exception as e:
+            console.print(f"[red]Error: {str(e)}[/red]")
+            logging.error(f"CLI error: {str(e)}")
+
+
 if __name__ == "__main__":
-    print("=" * 60)
-    print("🤖 ALPHAAGENT — Autonomous Stock Market AI")
-    print("=" * 60)
-    
-    # Test query
-    answer = run_agent("Give me a complete analysis of Reliance Industries stock")
-    print("\n📊 ALPHAAGENT RESPONSE:")
-    print("=" * 60)
-    print(answer)
+    main()
