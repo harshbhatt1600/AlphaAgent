@@ -14,6 +14,7 @@ from tools.news_sentiment import get_stock_news
 from tools.fetch_stock_data import fetch_stock_data
 from tools.technical_indicators import calculate_indicators
 from tools.anomaly_detection import detect_anomalies
+from utils.db import test_connection, log_agent_interaction
 
 load_dotenv()
 
@@ -231,6 +232,7 @@ def main():
 
     console.print("\n[dim]Commands: 'exit' to quit | 'clear' to reset conversation[/dim]\n")
 
+    test_connection()
     conversation_history = []
 
     while True:
@@ -259,6 +261,15 @@ def main():
                 border_style="cyan",
                 padding=(1, 2)
             ))
+
+            # Update conversation history
+           # Log to PostgreSQL
+            log_agent_interaction(
+                ticker=None,
+                user_query=user_input,
+                agent_response=response,
+                tools_used=[]
+            )
 
             # Update conversation history
             conversation_history.append({"role": "user", "content": user_input})

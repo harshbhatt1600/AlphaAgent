@@ -1,6 +1,8 @@
 import yfinance as yf
 import pandas as pd
 from datetime import datetime
+from utils.db import get_cached_stock_data, cache_stock_data  # NEW
+
 
 def fetch_stock_data(ticker: str, period: str = "3mo") -> dict:
     """
@@ -13,6 +15,11 @@ def fetch_stock_data(ticker: str, period: str = "3mo") -> dict:
     Returns:
         Dictionary with stock info and historical data
     """
+    # NEW: Check cache first — if fresh data exists, skip yfinance API call
+    cached = get_cached_stock_data(ticker, period)
+    if cached:
+        return cached
+
     try:
         stock = yf.Ticker(ticker)
         
@@ -49,6 +56,9 @@ def fetch_stock_data(ticker: str, period: str = "3mo") -> dict:
             "lowest_price": round(history["Low"].min(), 2),
             "history": history[["Open", "Close", "High", "Low", "Volume"]].tail(10).to_dict(orient="records")
         }
+
+        # NEW: Save to cache so next request for same ticker+period is instant
+        cache_stock_data(ticker, period, result)
         
         return result
 
