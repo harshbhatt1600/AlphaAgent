@@ -153,10 +153,10 @@ def build_price_chart(stock_data: dict) -> go.Figure:
     if not history:
         return go.Figure()
 
-    dates = list(range(len(history)))
-    closes = [h["Close"] for h in history]
-    highs = [h["High"] for h in history]
-    lows = [h["Low"] for h in history]
+    dates = [f"Day {i+1}" for i in range(len(history))]
+    closes = [round(h["Close"], 2) for h in history]
+    highs = [round(h["High"], 2) for h in history]
+    lows = [round(h["Low"], 2) for h in history]
 
     fig = go.Figure()
 
@@ -223,7 +223,8 @@ with tab1:
             stock = fetch_stock_data(ticker.strip(), period)
             indicators = calculate_indicators(ticker.strip(), period)
             anomalies = detect_anomalies(ticker.strip(), period)
-            news = get_stock_news(ticker.strip(), ticker.strip().split(".")[0])
+            company_search = stock.get("company_name", ticker.strip().split(".")[0])
+            news = get_stock_news(ticker.strip(), company_search)
 
         if "error" in stock:
             st.error(f"Error: {stock['error']}")
@@ -249,7 +250,7 @@ with tab1:
             anomaly_count = len(anomalies.get("anomalies", [])) if isinstance(anomalies, dict) else 0
 
             m1.metric("Current Price", f"₹{price:,.2f}" if stock.get("currency") == "INR" else f"${price:,.2f}", f"{change:+.2f}%")
-            m2.metric("Articles Analyzed", str(news.get("articles_analyzed", 0)) if isinstance(news, dict) else "0")
+            m2.metric("52W High", f"₹{stock.get('52_week_high', 'N/A'):,.2f}" if stock.get("currency") == "INR" else f"{stock.get('52_week_high', 'N/A')}")
             m3.metric("RSI (14)", f"{rsi_val:.1f}" if isinstance(rsi_val, float) else str(rsi_val))
             m4.metric("Anomalies", str(anomaly_count), "detected" if anomaly_count > 0 else "clean")
 
@@ -289,32 +290,33 @@ with tab1:
                 st.markdown('</div>', unsafe_allow_html=True)
 
             # --- News Sentiment ---
+            
             st.markdown('<div class="panel"><div class="panel-title">News Sentiment</div>', unsafe_allow_html=True)
             if isinstance(news, dict) and "latest_headlines" in news:
                 for headline in news["latest_headlines"][:5]:
                     st.markdown(f"""
                     <div class="news-item">
                       <div class="news-text">{headline}</div>
-                      <div class="badge badge-neu">NEWS</div>
                     </div>
                     """, unsafe_allow_html=True)
             else:
                 st.markdown('<div style="color:#8b949e;font-size:12px;">No news data available</div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
             # --- AI Recommendation Box ---
             rec_color = "#3fb950" if "BUY" in signal_text else "#f85149" if "SELL" in signal_text else "#8b949e"
-            sentiment_text = news.get("sentiment_analysis", "No sentiment data.")[:300] + "..." if isinstance(news, dict) else "No sentiment data."
             st.markdown(f"""
             <div class="ai-box">
               <div class="ai-title">◆ AlphaAgent Recommendation</div>
               <div class="ai-text">
                 Signal: <span style="color:{rec_color};font-weight:500;">{signal_text}</span> &nbsp;|&nbsp;
                 RSI: <span style="color:#f0f6fc;">{rsi_val}</span> &nbsp;|&nbsp;
-                Anomalies: <span style="color:#f0883e;">{anomaly_count} detected</span><br><br>
-                {sentiment_text}
+                Anomalies: <span style="color:#f0883e;">{anomaly_count} detected</span>
               </div>
             </div>
             """, unsafe_allow_html=True)
+
+            
 
     elif analyze and not ticker:
         st.warning("Please enter a ticker symbol.")
