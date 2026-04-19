@@ -15,6 +15,7 @@
 *Real-time data · Technical analysis · Anomaly detection · LLM-powered insights · Professional PDF reports*
 
 <br/>
+![AlphaAgent Dashboard](assets\Screen Recording 2026-04-19 080231.mp4)
 
 [🚀 Live Demo](#-getting-started) · [📖 Documentation](#️-architecture) · [🎯 Features](#-features) · [📊 Screenshots](#-screenshots)
 
@@ -61,15 +62,15 @@ Ask it *"Should I be worried about TCS right now?"* and it will automatically:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    USER INTERFACE                        │
+│                    USER INTERFACE                       │
 │         Streamlit Dashboard  ·  CLI Agent               │
 └──────────────────────┬──────────────────────────────────┘
                        │
                        ▼
-┌─────────────────────────────────────────────────────────┐
-│                  AGENT BRAIN                            │
+┌────────────────────────────────────────────────────────┐
+│                  AGENT BRAIN                           │
 │           Groq LLM (Llama 4 Scout)                     │
-│              ReAct Reasoning Loop                       │
+│              ReAct Reasoning Loop                      │
 │    Reason → Act → Observe → Reason → Final Answer      │
 └──────┬──────────┬──────────┬──────────┬────────────────┘
        │          │          │          │
@@ -87,13 +88,13 @@ Ask it *"Should I be worried about TCS right now?"* and it will automatically:
                              ▼
 ┌─────────────────────────────────────────────────────────┐
 │                    DATA LAYER                           │
-│   PostgreSQL — Stock Cache · Agent Audit Logs          │
+│      PostgreSQL — Stock Cache · Agent Audit Logs        │
 └─────────────────────────────────────────────────────────┘
                              │
                              ▼
 ┌─────────────────────────────────────────────────────────┐
 │                    OUTPUT LAYER                         │
-│   Web Dashboard · CLI Response · PDF Equity Report     │
+│    Web Dashboard · CLI Response · PDF Equity Report     │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -247,9 +248,9 @@ python -m agent.brain
 
 ### CLI Agent
 
-```              🤖 ALPHAAGENT
+```              
 ┌─────────────────────────────────────────┐
-│                                         │
+│  🤖 ALPHAAGENT                         │
 │  Autonomous Stock Market Intelligence   │
 │  Powered by Groq LLM + Real-time Data   │
 └─────────────────────────────────────────┘
