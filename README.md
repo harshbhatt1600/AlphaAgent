@@ -15,7 +15,8 @@
 *Real-time data · Technical analysis · Anomaly detection · LLM-powered insights · Professional PDF reports*
 
 <br/>
-[▶️ Watch Demo](assets/dashboard.mp4)
+
+![Dashboard Demo](assets/dashboard.gif)
 
 [🚀 Live Demo](#-getting-started) · [📖 Documentation](#️-architecture) · [🎯 Features](#-features) · [📊 Screenshots](#-screenshots)
 
