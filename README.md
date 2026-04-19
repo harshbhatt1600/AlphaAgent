@@ -301,15 +301,21 @@ You: Why did it drop on March 27?
 ## 📊 Screenshots
 
 ### Web Dashboard — Analysis Tab
+![AlphaAgent Dashboard](assets/dashboard1.png)
+![AlphaAgent Dashboard](assets/dashboard2.png)
 > Real-time stock analysis with price chart, technical indicators, and AI recommendation
 
 ### Web Dashboard — AI Agent Tab
+![AlphaAgent AI](assets\AI agent1.png)
+![AlphaAgent AI](assets\AI agent2.png)
 > Conversational interface to the autonomous agent
 
 ### Web Dashboard — Audit Logs Tab
+![AlphaAgent Audit](assets\Audit.png)
 > PostgreSQL-backed interaction history
 
 ### Generated PDF Report
+![AlphaAgent Audit](assets\pdf.png)
 > Professional Bloomberg-style equity research report with live data
 
 ---
