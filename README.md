@@ -306,8 +306,8 @@ You: Why did it drop on March 27?
 > Real-time stock analysis with price chart, technical indicators, and AI recommendation
 
 ### Web Dashboard — AI Agent Tab
-![AlphaAgent AI](assets/AI agent1.png)
-![AlphaAgent AI2](assets/AI agent2.png)
+![AlphaAgent AI](assets/AIagent1.png)
+![AlphaAgent AI2](assets/AIagent2.png)
 > Conversational interface to the autonomous agent
 
 ### Web Dashboard — Audit Logs Tab
