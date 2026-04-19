@@ -247,9 +247,9 @@ python -m agent.brain
 
 ### CLI Agent
 
-```
+```              🤖 ALPHAAGENT
 ┌─────────────────────────────────────────┐
-│  🤖 ALPHAAGENT                         │
+│                                         │
 │  Autonomous Stock Market Intelligence   │
 │  Powered by Groq LLM + Real-time Data   │
 └─────────────────────────────────────────┘
@@ -263,22 +263,22 @@ You: How is Reliance Industries performing right now?
   ⚙ Calling tool: calculate_indicators with {'ticker': 'RELIANCE.NS'}
   ⚙ Calling tool: get_stock_news with {'company_name': 'Reliance Industries'}
 
-╔══════════════════════════ AlphaAgent ═══════════════════════════╗
+╔══════════════════════════ AlphaAgent ═════════════════════════=══╗
 ║                                                                  ║
 ║  ## Reliance Industries Analysis                                 ║
 ║                                                                  ║
-║  Current Price: ₹1,313  |  Change: -2.3% (3mo)                 ║
+║  Current Price: ₹1,313  |  Change: -2.3% (3mo)                   ║
 ║                                                                  ║
 ║  Technical Indicators:                                           ║
-║  • RSI: 39.58 — NEUTRAL (approaching oversold)                  ║
-║  • MACD: BEARISH — downward momentum confirmed                  ║
-║  • MA20 below MA50 — Death Cross in effect                      ║
-║  • Bollinger Bands: Within normal range                         ║
+║  • RSI: 39.58 — NEUTRAL (approaching oversold)                   ║
+║  • MACD: BEARISH — downward momentum confirmed                   ║
+║  • MA20 below MA50 — Death Cross in effect                       ║
+║  • Bollinger Bands: Within normal range                          ║
 ║                                                                  ║
-║  News Sentiment: NEUTRAL (score: 0.1)                           ║
-║  5 volume anomalies detected in last 6 months                   ║
+║  News Sentiment: NEUTRAL (score: 0.1)                            ║
+║  5 volume anomalies detected in last 6 months                    ║
 ║                                                                  ║
-║  Overall Signal: ▼ BEARISH — monitor for reversal signals      ║
+║  Overall Signal: ▼ BEARISH — monitor for reversal signals        ║
 ║                                                                  ║
 ╚══════════════════════════════════════════════════════════════════╝
 
@@ -289,11 +289,11 @@ You: Why did it drop on March 27?
   ⚙ Calling tool: get_stock_news with {'company_name': 'Reliance Industries'}
 
 ╔══════════════════════════ AlphaAgent ═══════════════════════════╗
-║  March 27 shows a Z-score of -2.58 — a significant downward    ║
+║  March 27 shows a Z-score of -2.58 — a significant downward     ║
 ║  anomaly. The news sentiment on that date was NEGATIVE.         ║
 ║  This aligns with sector-wide selling pressure in the           ║
 ║  energy sector and broader market correction signals.           ║
-╚══════════════════════════════════════════════════════════════════╝
+╚═════════════════════════════════════════════════════════════════╝
 ```
 
 ---
@@ -454,7 +454,7 @@ AlphaAgent is built for educational and portfolio demonstration purposes. It doe
 
 <div align="center">
 
-**Built with 🔥 by Harsh Bhatt**
+**Built by Harsh Bhatt**
 
 *If this project helped you, please consider giving it a ⭐*
 
