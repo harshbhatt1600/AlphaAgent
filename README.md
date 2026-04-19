@@ -15,7 +15,7 @@
 *Real-time data · Technical analysis · Anomaly detection · LLM-powered insights · Professional PDF reports*
 
 <br/>
-![AlphaAgent Dashboard](assets\Screen Recording 2026-04-19 080231.mp4)
+[▶️ Watch Demo](assets/dashboard.mp4)
 
 [🚀 Live Demo](#-getting-started) · [📖 Documentation](#️-architecture) · [🎯 Features](#-features) · [📊 Screenshots](#-screenshots)
 
@@ -82,8 +82,8 @@ Ask it *"Should I be worried about TCS right now?"* and it will automatically:
 │          │ │         │ │        │ │              │
 │ yfinance │ │   ta    │ │Z-score │ │NewsAPI + LLM │
 └────┬─────┘ └────┬────┘ └───┬────┘ └──────┬───────┘
-     │             │          │              │
-     └─────────────┴──────────┴──────────────┘
+     │            │          │             │
+     └────────────┴──────────┴─────────────┘
                              │
                              ▼
 ┌─────────────────────────────────────────────────────────┐
